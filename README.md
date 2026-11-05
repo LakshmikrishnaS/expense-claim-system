@@ -111,22 +111,6 @@ Status codes: `400` validation / missing reject comment / bad file, `401` missin
 `403` wrong role or deactivated account, `404` unknown claim or someone else's claim, `409` business rule
 (not pending, already reviewed, duplicate email), `413` file too large.
 
-## Design notes (for the interview)
-
-* **404 instead of 403 for another user's claim** avoids revealing that the claim exists.
-* **Backend is the real protection.** Frontend guards and hidden buttons are only for usability; every endpoint is
-protected by the Spring Security filter chain, `@PreAuthorize` and service-level ownership checks.
-* **Deactivation takes effect immediately:** blocked at login and refresh, and `JwtAuthFilter` reloads the user on every
-request, so an already-issued access token stops working too.
-* **Refresh tokens** are random UUIDs stored in the database, rotated on every refresh and revoked on logout.
-* **Soft delete** keeps the audit trail. Audit logs are append-only and reference the claim by id only.
-* **Money** is `BigDecimal` (`DECIMAL(12,2)`), never `double`.
-* **Uploads:** content type, extension and file signature (magic bytes) are all checked; files are stored under a random
-UUID name, never the client's name.
-* **CSV export** neutralises spreadsheet formula injection (cells starting with `= + - @`).
-* Dynamic filters use JPA `Specification`s, which avoids null-parameter problems in JPQL.
-
-## Screenshots
 
 ## Screenshots
 
